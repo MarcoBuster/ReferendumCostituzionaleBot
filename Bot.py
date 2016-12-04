@@ -72,8 +72,8 @@ def start(chat, message):
 def process_callback(bot, chains, update):
     query = update.callback_query.data
     callback_id = update.callback_query.id
-
     message = update.callback_query.message
+
     if message == None:
         inline_message_id = update.callback_query.inline_message_id
 
@@ -82,11 +82,45 @@ def process_callback(bot, chains, update):
                 "callback_query_id": callback_id, "text": "🔄 Informazioni aggiornate!", "show_alert": False
             })
 
-            text = API.message_format(API.get_referendum(API.Referendum()))
+            text = API.message_format(API.get_referendum(API.Referendum()), None)
             try:
                 bot.api.call("editMessageText", {
                     "inline_message_id": inline_message_id, "text": text, "parse_mode": "HTML", "reply_markup":
-                        '{"inline_keyboard": [[{"text": "🔄 Aggiorna i risultati", "callback_data": "risultati"}], [{"text": "👥 Condividi il risultato", "switch_inline_query": ""}]]}'
+                        '{"inline_keyboard": [[{"text": "🔄 Aggiorna i risultati", "callback_data": "risultati"}],'
+                            '[{"text": "🗳 Guarda i risultati regione per regione", "callback_data": "regioni"}],'
+                            '[{"text": "👥 Condividi il risultato", "switch_inline_query": ""}]'
+                            ']}'
+                })
+            except:
+                pass
+
+        if query == "regioni":
+            bot.api.call("answerCallbackQuery", {
+                "callback_query_id": callback_id, "text": "🗳 Seleziona una regione", "show_alert": False
+            })
+
+            text = "🗳 <b>Seleziona una regione</b> di cui vuoi visualizzarne le <b>informazioni</b>"
+            bot.api.call("editMessageText", {
+                "inline_message_id": inline_message_id, "text": text, "parse_mode": "HTML", "reply_markup":
+                    '{"inline_keyboard": '+API.generate_keyboard(API.REGIONI)+'}'
+                })
+
+        if "reg@" in query:
+            regione = query.split('reg@')[1]
+
+            bot.api.call("answerCallbackQuery", {
+                "callback_query_id": callback_id, "text": "🔄 Informazioni aggiornate per la regione "+regione, "show_alert": False
+            })
+
+            text = API.message_format(API.get_regione(API.Referendum(), regione), regione)
+
+            try:
+                bot.api.call("editMessageText", {
+                    "inline_message_id": inline_message_id, "text": text, "parse_mode": "HTML", "reply_markup":
+                        '{"inline_keyboard": [[{"text": "🔄 Aggiorna i risultati", "callback_data": "reg@'+regione+'"}],'+
+                        '[{"text": "🔙 Lista delle regioni", "callback_data": "regioni"}, {"text": "🇮🇹 Risultati nazionali", "callback_data": "risultati"}],'
+                        '[{"text": "👥 Condividi il risultato", "switch_inline_query": ""}]'+
+                        ']}'
                 })
             except:
                 pass
@@ -94,16 +128,51 @@ def process_callback(bot, chains, update):
         return
 
     chat = message.chat
+
     if query == "risultati":
         bot.api.call("answerCallbackQuery", {
             "callback_query_id": callback_id, "text": "🔄 Informazioni aggiornate!", "show_alert": False
         })
 
-        text = API.message_format(API.get_referendum(API.Referendum()))
+        text = API.message_format(API.get_referendum(API.Referendum()), None)
         try:
             bot.api.call("editMessageText", {
                 "chat_id": chat.id, "message_id": message.message_id, "text": text, "parse_mode": "HTML", "reply_markup":
-                    '{"inline_keyboard": [[{"text": "🔄 Aggiorna i risultati", "callback_data": "risultati"}], [{"text": "👥 Condividi il risultato", "switch_inline_query": ""}]]}'
+                '{"inline_keyboard": [[{"text": "🔄 Aggiorna i risultati", "callback_data": "risultati"}],'
+                    '[{"text": "🗳 Guarda i risultati regione per regione", "callback_data": "regioni"}],'
+                    '[{"text": "👥 Condividi il risultato", "switch_inline_query": ""}]'
+                    ']}'
+            })
+        except:
+            pass
+
+    if query == "regioni":
+        bot.api.call("answerCallbackQuery", {
+            "callback_query_id": callback_id, "text": "🗳 Seleziona una regione", "show_alert": False
+        })
+
+        text = "🗳 <b>Seleziona una regione</b> di cui vuoi visualizzarne le <b>informazioni</b>"
+        bot.api.call("editMessageText", {
+            "chat_id": chat.id, "message_id": message.message_id, "text": text, "parse_mode": "HTML", "reply_markup":
+                '{"inline_keyboard": '+API.generate_keyboard(API.REGIONI)+'}'
+            })
+
+    if "reg@" in query:
+        regione = query.split('reg@')[1]
+
+        bot.api.call("answerCallbackQuery", {
+            "callback_query_id": callback_id, "text": "🔄 Informazioni aggiornate per la regione "+regione, "show_alert": False
+        })
+
+        text = API.message_format(API.get_regione(API.Referendum(), regione), regione)
+
+        try:
+            bot.api.call("editMessageText", {
+                "chat_id": chat.id, "message_id": message.message_id, "text": text, "parse_mode": "HTML", "reply_markup":
+                    '{"inline_keyboard": [[{"text": "🔄 Aggiorna i risultati", "callback_data": "reg@'+regione+'"}],'+
+                    '[{"text": "🔙 Lista delle regioni", "callback_data": "regioni"}, {"text": "🇮🇹 Risultati nazionali", "callback_data": "risultati"}],'
+                    '[{"text": "👥 Condividi il risultato", "switch_inline_query": ""}]'+
+                    ']}'
             })
         except:
             pass
@@ -116,7 +185,7 @@ def process_inline(bot, chains, update):
     sender = update.inline_query.sender
     query = update.inline_query.query
 
-    text = API.message_format(API.get_referendum(API.Referendum()))
+    text = API.message_format(API.get_referendum(API.Referendum()), None)
 
     bot.api.call("answerInlineQuery", {
                     "switch_pm_text": "Avvia il bot in privata",
@@ -134,7 +203,9 @@ def process_inline(bot, chains, update):
                             '"parse_mode": "HTML"'+
                         '}, '+
                         '"reply_markup": {"inline_keyboard":'+
-                            '[[{"text": "🔄 Aggiorna i risultati", "callback_data": "risultati"}], [{"text": "👥 Condividi il risultato", "switch_inline_query": ""}]]'+
+                            '[[{"text": "🔄 Aggiorna i risultati", "callback_data": "risultati"}],'+
+                            '[{"text": "🗳 Guarda i risultati regione per regione", "callback_data": "regioni"}],'
+                            '[{"text": "👥 Condividi il risultato", "switch_inline_query": ""}]]'+
                         '}'+
                     '}]'
                 })
@@ -163,12 +234,19 @@ def post(chat, message, args):
 
     message = " ".join(message.text.split(" ", 1)[1:])
 
+    n = 0
+
     for res in users_list:
+        n += 1
+
+        if n < 50:
+            continue
+
         try:
             bot.chat(res[0]).send(message)
             chat.send("Post sent to "+str(res[0]))
         except botogram.api.ChatUnavailableError:
-            c.execute('DELETE FROM users WHERE userid={}'.format(res[0]))
+            c.execute('DELETE FROM users WHERE user_id={}'.format(res[0]))
             chat.send("The user "+str(res[0])+" has blocked your bot, so I removed him from the database")
             conn.commit()
         except Exception as e:
