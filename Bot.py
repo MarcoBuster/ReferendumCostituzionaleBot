@@ -148,11 +148,7 @@ def users(chat, message):
     rows = API.c.fetchall()
     API.conn.commit()
 
-    n = 0
-    for res in rows:
-        n += 1
-
-    message.reply("Questo bot è utilizzato da <b>{n} utenti</b>".format(n=n))
+    message.reply("Questo bot è utilizzato da <b>{n} utenti</b>".format(n=len(rows)))
 
 
 @bot.command("post")

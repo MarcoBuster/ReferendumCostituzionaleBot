@@ -67,7 +67,7 @@ def get_referendum(Referendum):
 
     Referendum.affluenza = clean_html(affluenza.contents[1])
     Referendum.sezioni = clean_html(sezioni)
-    Referendum.ultimo_aggiornamento = clean_html(ultimo_aggiornamento.contents[0])
+    Referendum.ultimo_aggiornamento = clean_html(ultimo_aggiornamento.contents[0]).replace('Ultimo aggiornamento: ', '')
 
     return Referendum
 
@@ -81,7 +81,7 @@ def message_format(Referendum):
         "\n🗒 <b>Schede bianche</b>: {bianche}"
         "\n❌ <b>Schede nulle</b>: {nulle}"
         "\n⁉️ <b>Schede contestate</b>: {contestate}"
-        "\n👥 <b>Affluenza</b>: {affluenza}"
+        "\n👥 <b>Affluenza</b>: {affluenza}%"
         "\n👀 <b>Contate</b>: {sezioni}"
         "\n🕒 <b>Ultimo aggiornamento</b>: {ultimo_aggiornamento}"
         .format(si_percent=r.si_percent, si_numero=r.si_numero, no_percent=r.no_percent, no_numero=r.no_numero,
