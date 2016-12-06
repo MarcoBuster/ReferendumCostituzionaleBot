@@ -1,8 +1,8 @@
 # Referendum Costituzionale Bot [![Bot](https://img.shields.io/badge/Telegram-@ReferendumCostituzionaleBot-red.svg?style=flat)][Bot]
-**Referendum Costituzionale Bot** è un **bot per Telegram** per ricevere i risultati dello spoglio delle schede elettorali del *Referendum Costituzionale 04/12/2016* e di ricevere notifiche ogni ora con l'aggiornamento dei risultati
+**Referendum Costituzionale Bot** era un **bot per Telegram** per ricevere i risultati dello spoglio delle schede elettorali del *Referendum Costituzionale 04/12/2016* e di ricevere notifiche ogni ora con l'aggiornamento dei risultati
 
 ### Funzionalità e utilizzo
-Il bot è raggiungibile su Telegram cercando `@ReferendumCostituzionaleBot`, utilizza **HTML Parsing** dal [sito di Repubblica.it][Repubblica].
+Il bot era raggiungibile su Telegram cercando `@ReferendumCostituzionaleBot`, utilizzava **HTML Parsing** dal [sito di Repubblica.it][Repubblica]. Il bot è ora **deprecato**, ma i sorgenti rimmarranno pubblicamente disponibili.
 
 ### Installazione
 Per installare questo bot sulla tua VPS Linux Ubuntu, devi:
